@@ -6,11 +6,11 @@ import javax.validation.constraints.NotBlank;
 
 public class Good {
     private String goodName;
-    private Document typeId;
+    private String type;
 
-    public Good(String goodName, Document typeId) {
+    public Good(String goodName, String type) {
         this.goodName = goodName;
-        this.typeId = typeId;
+        this.type = type;
 
     }
     @NotBlank (message = "Yor name good is blank")
@@ -22,19 +22,19 @@ public class Good {
         this.goodName = goodName;
     }
 
-    public Document getTypeId() {
-        return typeId;
+    public String getType() {
+        return type;
     }
 
-    public void setTypeId(Document typeId) {
-        this.typeId = typeId;
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
     public String toString() {
         return "Good{" +
                 "good_name='" + goodName + '\'' +
-                ", typeId=" + typeId +
+                ", typeId=" + type +
                 '}';
     }
 }
