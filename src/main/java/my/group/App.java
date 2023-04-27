@@ -15,24 +15,36 @@ public class App {
     private static final RPS RPS = new RPS();
     private static final CollectionCreator CREATOR = new CollectionCreator();
     public static final DocumentFinder FINDER = new DocumentFinder();
-    public static final  MyCSVReader CSV_READER = new MyCSVReader();
+    public static final MyCSVReader CSV_READER = new MyCSVReader();
+
     public static void main(String[] args) {
         List<String[]> types = CSV_READER.getListAllLinesFromCSV("type.csv");
         String typeGood = args.length != 0 ? args[0] : types.get(0)[0];
         readPropertyFile();
         String endPoint = PROPERTIES.getProperty("endPoint");
         int sizeGoods = Integer.parseInt(PROPERTIES.getProperty("sizeGoods"));
-            try (MongoClient mongoClient = MongoClients.create(endPoint)) {
-                RPS.startWatch();
-                MongoDatabase database = mongoClient.getDatabase("epicentr");
-                CREATOR.createAndFillStoresFromCSV(database);
-//                CREATOR.createGoodCollection(database,sizeGoods,types);
-//                CREATOR.deliverGoodsToStores(database);
-//                FINDER.findAddressStore(database,typeGood);
-                LOGGER.info("Time all program {} seconds",RPS.getTimeSecond());
-            }
-    }
+        try (MongoClient mongoClient = MongoClients.create(endPoint)) {
+            RPS.startWatch();
+            MongoDatabase database = mongoClient.getDatabase("epicentr");
 
+            List<Object> idStores = CREATOR.createAndFillStoresFromCSV(database);
+            RPS.setSaveTime(RPS.getTimeSecond());
+            RPS goodRPS = CREATOR.createGoodCollection(database, sizeGoods, types);
+            RPS deliverGoodsRPS = CREATOR.deliverGoodsToStores(database, idStores);
+            RPS findAddressRPS = FINDER.findAddressStore(database, typeGood);
+
+            LOGGER.info("The speed of creating and filling a collection of stores = {} sec.", RPS.getSaveTime());
+            LOGGER.info("The speed of creating and filling a collection of goods = {} sec.", goodRPS.getTimeSecond());
+            LOGGER.info("RPS of filling a collection of goods = {}", goodRPS.getRPS());
+            LOGGER.info("The number of added goods = {}", goodRPS.getCount());
+            LOGGER.info("The speed of deliver goods to stores= {} sec.", deliverGoodsRPS.getTimeSecond());
+            LOGGER.info("RPS of deliver goods to stores= {}", deliverGoodsRPS.getRPS());
+            LOGGER.info("The speed of find Address store= {} sec.", findAddressRPS.getTimeSecond());
+
+            RPS.stopWatch();
+            LOGGER.info("Time all program {} seconds", RPS.getTimeSecond());
+        }
+    }
 
     private static void readPropertyFile() {
         try {

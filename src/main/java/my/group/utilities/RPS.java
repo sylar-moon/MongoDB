@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class RPS {
     private final StopWatch watch = new StopWatch();
     private int count = 0;
-
+    private long saveTime;
     public void startWatch() {
         watch.start();
     }
@@ -36,5 +36,12 @@ public class RPS {
         count++;
     }
 
-    
+    public void setSaveTime (long time){
+        saveTime=time;
+    }
+
+    public long getSaveTime() {
+        return saveTime;
+    }
+
 }
