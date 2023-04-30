@@ -6,7 +6,7 @@ import my.group.collection.DocumentFinder;
 import my.group.utilities.*;
 import org.slf4j.Logger;
 
-import java.io.IOException;
+
 import java.util.List;
 
 public class App {
@@ -20,9 +20,10 @@ public class App {
     public static void main(String[] args) {
         List<String[]> types = CSV_READER.getListAllLinesFromCSV("type.csv");
         String typeGood = args.length != 0 ? args[0] : types.get(0)[0];
-        readPropertyFile();
+        PROPERTIES.readPropertyFile();
         String endPoint = PROPERTIES.getProperty("endPoint");
         int sizeGoods = Integer.parseInt(PROPERTIES.getProperty("sizeGoods"));
+
         try (MongoClient mongoClient = MongoClients.create(endPoint)) {
             RPS.startWatch();
             MongoDatabase database = mongoClient.getDatabase("epicentr");
@@ -39,18 +40,11 @@ public class App {
             LOGGER.info("The number of added goods = {}", goodRPS.getCount());
             LOGGER.info("The speed of deliver goods to stores= {} sec.", deliverGoodsRPS.getTimeSecond());
             LOGGER.info("RPS of deliver goods to stores= {}", deliverGoodsRPS.getRPS());
+            LOGGER.info("Count of deliver goods to stores= {}", deliverGoodsRPS.getCount());
             LOGGER.info("The speed of find Address store= {} sec.", findAddressRPS.getTimeSecond());
 
             RPS.stopWatch();
             LOGGER.info("Time all program {} seconds", RPS.getTimeSecond());
-        }
-    }
-
-    private static void readPropertyFile() {
-        try {
-            PROPERTIES.readPropertyFile();
-        } catch (IOException e) {
-            LOGGER.error("Properties file not found");
         }
     }
 }

@@ -13,8 +13,6 @@ public class CheckTerrorismValidator implements ConstraintValidator<CheckTerrori
         String str = s.toLowerCase();
 
         return !(str.equals("russia")
-                || str.equals("novorossia")
-                || str.equals("goyda")
                 || str.equals("zov")
                 || str.equals("rus")
                 || str.equals("dnr")
