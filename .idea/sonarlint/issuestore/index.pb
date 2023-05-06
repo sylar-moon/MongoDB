@@ -1,0 +1,21 @@
+
+7
+pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
+d
+4src/main/java/my/group/validator/CheckTerrorism.java,9\1\918e5afbc43268254b4e844ef6d33019e7b5e34a
+m
+=src/main/java/my/group/validator/CheckTerrorismValidator.java,a\5\a55b7cbc8939ff702cad446f061c35d2a60c73de
+8
+type.csv,9\6\966cfd5566e640125dec76850513d315b7039fa7
+a
+1src/main/java/my/group/validator/MyValidator.java,0\b\0b524a85348477a41368adee3fb3316d9247772f
+e
+5src/test/java/my/group/validator/MyValidatorTest.java,1\9\196efe12d88e76451216a4243789271726da40fc
+^
+.src/main/java/my/group/utilities/MyLogger.java,0\b\0ba8d5e52a2854dc1fa48fd74ac7e7ee865a60f9
+A
+config.properties,5\b\5b4197fb87e6e5ff44afbf358a3bd23a35f56456
+9
+	store.csv,a\1\a10f153cdb07a96d7d29ebd8a96bb33462fa0d5c
+Y
+)src/main/java/my/group/utilities/RPS.java,8\2\82329f9c262957c7867103640290a771befc2e62

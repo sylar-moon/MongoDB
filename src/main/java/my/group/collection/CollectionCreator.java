@@ -13,7 +13,6 @@ import org.bson.Document;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -33,6 +32,7 @@ public class CollectionCreator {
     /**
      * Creates a collection of stores, reads store addresses from csv. file
      * and writes them to the collection
+     *
      * @param database mongoDB database
      * @return list of added stores id
      */
@@ -58,9 +58,10 @@ public class CollectionCreator {
 
     /**
      * Creates a collection of goods, generates goods using GoodFactory and writes them to the collection
-     * @param database mongoDB database
+     *
+     * @param database  mongoDB database
      * @param sizeGoods number of products to generate
-     * @param types list of product types with csv. file
+     * @param types     list of product types with csv. file
      * @return RPS with the time when items were added and the number of items added
      */
     public RPS createGoodCollection(MongoDatabase database, int sizeGoods, List<String[]> types) {
@@ -96,58 +97,16 @@ public class CollectionCreator {
     /**
      * Creates a collection with the id of the stores and the goods that are in them,
      * fills it with a random number of goods
+     *
      * @param database mongoDB database
      * @param idStores list with id of all stores in the database
      * @return RPS with good addition rate and goods quantity added
      */
-//    public RPS deliverGoodsToStores(MongoDatabase database, List<Object> idStores) {
-//        RPS rps = new RPS();
-//        rps.startWatch();
-//        MongoCollection<Document> goodCollection = database.getCollection("good");
-//        MongoCollection<Document> storeGoodCollection = database.getCollection("storeGood");
-//
-//        goodCollection.createIndex(Indexes.ascending("name"));
-//        goodCollection.createIndex(Indexes.ascending(COLLECTION_TYPE));
-//
-//        int bufferSize = Math.min((int) goodCollection.countDocuments(), BUFFER_SIZE);
-//        List<WriteModel<Document>> writes = new ArrayList<>(bufferSize);
-//        BulkWriteOptions bulkWriteOptions = new BulkWriteOptions().ordered(true);
-//
-//        for (Object idStore : idStores) {
-//
-//
-//                for (Document goodDoc : goodCollection.find()) {
-//                    rps.incrementCount();
-//
-//                    Document doc = new Document(COLLECTION_STORE, idStore)
-//                            .append("nameGood", goodDoc.getString("name"))
-//                            .append("typeGood", goodDoc.getString(COLLECTION_TYPE))
-//                            .append("sizeGood", random.nextInt(500) + 1);
-//                    writes.add(new InsertOneModel<>(doc));
-//                    if (writes.size() > bufferSize) {
-//                        storeGoodCollection.withWriteConcern(WriteConcern.UNACKNOWLEDGED).bulkWrite(writes, bulkWriteOptions);
-//                        writes.clear();
-//                    }
-//                }
-//
-//                if (!writes.isEmpty()) {
-//                    storeGoodCollection.withWriteConcern(WriteConcern.UNACKNOWLEDGED).bulkWrite(writes, bulkWriteOptions);
-//                }
-//            }
-//
-//        rps.stopWatch();
-//        return rps;
-//    }
-
-
-
-
     public RPS deliverGoodsToStores(MongoDatabase database, List<Object> idStores) {
         RPS rps = new RPS();
         rps.startWatch();
         MongoCollection<Document> goodCollection = database.getCollection("good");
         MongoCollection<Document> storeGoodCollection = database.getCollection("storeGood");
-
         goodCollection.createIndex(Indexes.ascending("name"));
         goodCollection.createIndex(Indexes.ascending(COLLECTION_TYPE));
         int bufferSize = Math.min((int) goodCollection.countDocuments(), BUFFER_SIZE);
@@ -157,14 +116,12 @@ public class CollectionCreator {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         //In the loop, we add to the storeGood collection for each store all the goods with their random quantity
         for (Object idStore : idStores) {
-
             BulkWriteOptions bulkWriteOptions = new BulkWriteOptions().ordered(true);
             List<WriteModel<Document>> writes = new ArrayList<>(bufferSize);
             // Start an asynchronous task that will run in the background.
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 for (Document goodDoc : goodCollection.find()) {
                     rps.incrementCount();
-
                     Document doc = new Document(COLLECTION_STORE, idStore)
                             .append("nameGood", goodDoc.getString("name"))
                             .append("typeGood", goodDoc.getString(COLLECTION_TYPE))

@@ -13,6 +13,7 @@ import java.util.List;
 public class MyCSVReader {
     private final Logger logger = new MyLogger().getLogger();
 
+
     public List<String[]> getListAllLinesFromCSV(String pathToCSV) {
         try (CSVReader reader = new CSVReader(new FileReader(pathToCSV))) {
             return reader.readAll();

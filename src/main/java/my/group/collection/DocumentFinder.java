@@ -19,6 +19,12 @@ public class DocumentFinder {
     private final Logger logger = new MyLogger().getLogger();
     private final RPS rps = new RPS();
 
+    /**
+     * Finds the address of the store that has the most goods of a certain type and displays it in the log
+     * @param database MongoDB database
+     * @param typeGood product type
+     * @return RPS at method speed
+     */
     public RPS findAddressStore(MongoDatabase database, String typeGood) {
         rps.startWatch();
         MongoCollection<Document> collectionStoreGood = database.getCollection("storeGood");
@@ -31,13 +37,12 @@ public class DocumentFinder {
                 new Document("$limit", 1)
         ));
         AggregateIterable<Document> result = collectionStoreGood.aggregate(pipeline);
-        for (Document document : result) {
-            Object idStore = document.get("store");
+            Object idStore = Objects.requireNonNull(result.first()).get("store");
             FindIterable<Document> doc = collectionStore.find(new Document("_id", idStore));
             Object city = Objects.requireNonNull(doc.first()).get("city");
             Object address = Objects.requireNonNull(doc.first()).get("address");
             logger.info("store {}, {}", city, address);
-        }
+
         rps.stopWatch();
         return rps;
     }
